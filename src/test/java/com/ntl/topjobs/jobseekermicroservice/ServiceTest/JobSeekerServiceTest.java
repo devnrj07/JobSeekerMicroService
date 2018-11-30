@@ -148,7 +148,7 @@ ArrayList<EducationDetails> list = new ArrayList<EducationDetails>();
 		
 		list.add(education);
 		
-		 Mockito.lenient().when(educationdb.findByResumeID("RID100")).thenReturn(list);
+		 Mockito.lenient().when(educationdb.findAllByResumeID("RID100")).thenReturn(list);
 		 JobSeekerService sc=new JobSeekerService(educationdb);
 		 
 		 assertEquals(1,sc.getEducationDetailsByResumeId("RID100").size());

@@ -1,14 +1,18 @@
 package com.ntl.topjobs.jobseekermicroservice.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 import com.ntl.topjobs.jobseekermicroservice.dao.EducationDao;
 import com.ntl.topjobs.jobseekermicroservice.dao.ExperienceDao;
 import com.ntl.topjobs.jobseekermicroservice.dao.ResumeDao;
 import com.ntl.topjobs.jobseekermicroservice.dao.SkillsDao;
+import com.ntl.topjobs.jobseekermicroservice.exceptions.EducationDetailsNotFoundException;
+import com.ntl.topjobs.jobseekermicroservice.exceptions.ExperienceDetailsNotFoundException;
 import com.ntl.topjobs.jobseekermicroservice.model.EducationDetails;
 import com.ntl.topjobs.jobseekermicroservice.model.ExperienceDetails;
 import com.ntl.topjobs.jobseekermicroservice.model.Resume;
@@ -69,7 +73,7 @@ public class JobSeekerService {
 	
 	public List<EducationDetails> getEducationDetailsByResumeId(String resumeId){
 		
-		return eduDao.findByResumeID(resumeId);
+		return eduDao.findAllByResumeID(resumeId);
 	}
 	
 	public EducationDetails addEducation(EducationDetails education) {
@@ -77,6 +81,36 @@ public class JobSeekerService {
 		return eduDao.save(education);
 
 	}
+	
+	public EducationDetails deleteEducation(long id) {
+
+		Optional<EducationDetails>  creds = eduDao.findById(id);
+
+		if (!creds.isPresent())
+			throw new EducationDetailsNotFoundException("id-" + id);
+
+		eduDao.deleteById(id);
+		return creds.get();
+
+	}
+	
+	public EducationDetails updateEducationDetails(EducationDetails education, long eduId, String resumeId) {
+		
+		EducationDetails  creds = eduDao.findByResumeIDEduId(resumeId, eduId);
+
+		if (creds==null)
+			{throw new  EducationDetailsNotFoundException("id-" + eduId);
+	        
+			}
+		
+		education.setEduID(eduId);
+		education.setResumeID(resumeId);
+		eduDao.deleteById(eduId);
+		eduDao.save(education);
+		
+		return creds;
+	}
+	
 
 	
 	public List<ExperienceDetails> getExperienceDetails(){
@@ -92,6 +126,29 @@ public class JobSeekerService {
 
 		return expDao.save(experience);
 	}
+	
+	public ExperienceDetails deleteExperienceDetails(long id){
+		Optional<ExperienceDetails>  creds = expDao.findById(id);
+
+		if (!creds.isPresent())
+			throw new ExperienceDetailsNotFoundException("id-" + id);
+
+		expDao.deleteById(id);
+		return creds.get();
+	}
+	
+	public ExperienceDetails updateExperienceDetails(ExperienceDetails experience, long id){
+		Optional<ExperienceDetails>  creds = expDao.findById(id);
+
+		if (!creds.isPresent())
+			throw new ExperienceDetailsNotFoundException("id-" + id);
+
+		experience.setExpId(id);
+		expDao.deleteById(id);
+		expDao.save(experience);
+		return creds.get();
+	}
+	
 	
 
 	public List<Skills> getSkillsDetails(){

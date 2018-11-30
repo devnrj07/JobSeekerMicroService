@@ -52,7 +52,7 @@ public class EducationDetails {
 	 * @param resumeID the resumeID to set
 	 */
 	public void setResumeID(String resumeID) {
-		resumeID = resumeID;
+		this.resumeID = resumeID;
 	}
 	/**
 	 * @return the degree
